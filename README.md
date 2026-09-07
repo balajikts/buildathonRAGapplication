@@ -1,100 +1,205 @@
 # 🏋️ Infinity Fitness Gym AI Assistant
 
-An end-to-end **Retrieval-Augmented Generation (RAG)** application built with **Python, LangChain, ChromaDB, OpenAI, LangSmith, Streamlit, and Excel**.
+A **Retrieval-Augmented Generation (RAG) based AI Assistant** built using Python, LangChain, OpenAI, ChromaDB, LangSmith, Excel, and Streamlit.
 
-The Infinity Fitness Gym AI Assistant allows users to ask questions about exercises, muscle groups, trainers, certifications, and other information available in the provided knowledge base.
+The application allows users to ask natural-language questions about:
 
-The application retrieves relevant document chunks and generates grounded responses using an LLM.
+* 🏋️ Exercise information
+* 👨‍🏫 Trainer information
+* 💳 Gym membership plans
 
----
-
-# 🎯 Project Objective
-
-The goal of this project is to demonstrate a practical **GenAI + RAG + QA** solution for a fitness domain.
-
-The application demonstrates:
-
-* 📄 PDF and TXT document ingestion
-* ✂️ Document chunking
-* 🏷️ Metadata enrichment
-* 🔢 Vector embeddings
-* 🔎 Semantic retrieval
-* 🗄️ ChromaDB vector storage
-* 🧠 OpenAI LLM integration
-* 🔬 LangSmith tracing
-* 📊 Excel execution logging
-* ⚡ Response latency measurement
-* 🧪 RAG debugging
-* 📈 QA metrics dashboard
-* 🖥️ Streamlit UI
-* 💾 Streamlit session-state persistence
+The system retrieves relevant information from the gym's knowledge sources and generates **grounded responses using only the retrieved context**.
 
 ---
 
-# 🏗️ Application Architecture
+## 🚀 Project Objective
+
+Build a practical **GenAI + RAG + QA demonstration application** that can:
+
+1. Load heterogeneous knowledge sources.
+2. Add metadata to documents.
+3. Split documents into meaningful chunks.
+4. Generate vector embeddings.
+5. Store embeddings in ChromaDB.
+6. Retrieve relevant information based on user questions.
+7. Generate grounded answers using an LLM.
+8. Trace RAG execution using LangSmith.
+9. Log every query and response into Excel.
+10. Display QA and performance metrics through a Streamlit dashboard.
+
+---
+
+# 🏗️ Architecture
 
 ```text
                     USER
                       │
                       ▼
-             ┌─────────────────┐
-             │   Streamlit UI  │
-             └────────┬────────┘
+              Streamlit Application
                       │
                       ▼
-              User Question
+                User Question
                       │
                       ▼
-             ┌─────────────────┐
-             │  RAG Pipeline   │
-             └────────┬────────┘
+              RAG Application
                       │
-                      ▼
-             ┌─────────────────┐
-             │ Chroma Retriever│
-             └────────┬────────┘
-                      │
-                      ▼
-              Relevant Chunks
-                      │
-                      ▼
-             ┌─────────────────┐
-             │ Context Builder │
-             └────────┬────────┘
-                      │
-                      ▼
-             ┌─────────────────┐
-             │   OpenAI LLM    │
-             └────────┬────────┘
-                      │
-                      ▼
-              Grounded Answer
-                      │
-          ┌───────────┼────────────┐
-          ▼           ▼            ▼
-       Sources     LangSmith    Excel Log
-          │                        │
-          └──────────┬─────────────┘
-                     ▼
-              QA Metrics Dashboard
+          ┌───────────┴───────────┐
+          ▼                       ▼
+     Retriever                 OpenAI LLM
+          │                       │
+          ▼                       │
+      ChromaDB                    │
+          │                       │
+          ▼                       │
+   Relevant Chunks ───────────────┘
+          │
+          ▼
+     Grounded Answer
+          │
+      ┌───┴───────────────┐
+      ▼                   ▼
+   Excel Log          LangSmith Trace
+      │
+      ▼
+ Metrics Dashboard
 ```
 
 ---
 
-# 📂 Project Structure
+# 📚 Knowledge Sources
+
+The application currently uses three knowledge sources.
+
+```text
+data/
+├── exercise.txt
+├── gym_membership.txt
+└── trainer_directory_30_pages.pdf
+```
+
+## 1. Exercise Manual
+
+**File:**
+
+```text
+data/exercise.txt
+```
+
+Contains exercise-related information organized around different muscle groups and exercises.
+
+Metadata:
+
+```text
+source_type       = TXT
+document_category = exercise
+content_type      = exercise_information
+```
+
+---
+
+## 2. Gym Membership Plans
+
+**File:**
+
+```text
+data/gym_membership.txt
+```
+
+Current membership information:
+
+```text
+INFINITY FITNESS GYM - MEMBERSHIP PLANS
+
+Registration Fee: ₹500
+
+Membership Plans:
+
+1 Month: ₹2,500
+3 Months: ₹5,000
+6 Months: ₹7,000
+12 Months: ₹12,000
+```
+
+Metadata:
+
+```text
+source_type       = TXT
+document_category = membership
+content_type      = membership_information
+```
+
+Example questions:
+
+```text
+What is the membership fee for 1 month?
+
+How much does a 6 month membership cost?
+
+What is the registration fee?
+
+How much is the annual membership?
+
+What membership plans are available?
+```
+
+---
+
+## 3. Trainer Directory
+
+**File:**
+
+```text
+data/trainer_directory_30_pages.pdf
+```
+
+The PDF contains trainer information including:
+
+* Trainer ID
+* Trainer name
+* Primary specialization
+* Certifications
+* Experience
+* Location
+
+Metadata:
+
+```text
+source_type       = PDF
+document_category = trainer_directory
+content_type      = trainer_information
+page_number      = PDF page number
+```
+
+Example questions:
+
+```text
+Who are the bodybuilding trainers?
+
+Find trainers with NASM certification.
+
+Which trainers are located in Boston?
+
+Who has experience in yoga?
+
+Find a trainer specializing in marathon preparation.
+```
+
+---
+
+# 📁 Project Structure
 
 ```text
 Buildathon Gym App/
 │
 ├── mainapplication.py
 ├── README.md
-├── requirements.txt
-├── .env
-├── .env.example
 ├── .gitignore
+├── .env
+├── requirements.txt
 │
 ├── data/
 │   ├── exercise.txt
+│   ├── gym_membership.txt
 │   └── trainer_directory_30_pages.pdf
 │
 ├── chroma_db/
@@ -116,160 +221,96 @@ Buildathon Gym App/
 
 ---
 
-# 📚 Knowledge Sources
+# 🔄 RAG Pipeline
 
-The current knowledge base contains two document types.
+## Step 1 — Document Loading
 
-## 1. Exercise Manual
+`load_documents.py` dynamically loads all TXT and PDF files from the `data` directory.
 
 ```text
-data/exercise.txt
+TXT → TextLoader
+PDF → PyPDFLoader
 ```
 
-Contains exercise information organized around muscle groups.
+The loader automatically detects:
 
-Examples include:
+```text
+*.txt
+*.pdf
+```
 
-* Chest
-* Back
-* Shoulders
-* Legs
-* Arms
-* Core
+This means additional TXT/PDF knowledge sources can be added without modifying the loader.
 
 ---
 
-## 2. Trainer Directory
+# 🏷️ Step 2 — Metadata Enrichment
 
-```text
-data/trainer_directory_30_pages.pdf
-```
-
-Contains trainer information including:
-
-* Trainer ID
-* Trainer name
-* Specialization
-* Certifications
-* Experience
-* Location
-
----
-
-# 🔄 RAG Data Preparation Pipeline
-
-Before users can query the application, the source documents go through the following pipeline:
-
-```text
-TXT / PDF
-   ↓
-Document Loader
-   ↓
-Metadata Enrichment
-   ↓
-Document Chunking
-   ↓
-OpenAI Embeddings
-   ↓
-ChromaDB
-```
-
----
-
-# 📄 Document Loading
-
-`src/load_documents.py`
-
-The application loads:
-
-### TXT
-
-Using LangChain's text document loader.
-
-### PDF
-
-Using LangChain's PDF loader.
-
-Basic metadata is attached to the loaded documents.
+`metadata.py` assigns metadata based on the source file.
 
 Example:
 
 ```text
-source_type
-file_name
-```
-
----
-
-# 🏷️ Metadata Enrichment
-
-`src/metadata.py`
-
-Documents are enriched with metadata.
-
-Typical metadata:
-
-```text
-document_category
-content_type
-source_file
-page_number
-```
-
-Example:
-
-```text
+exercise.txt
+    ↓
 document_category = exercise
-content_type = exercise_information
-source_file = exercise.txt
+
+gym_membership.txt
+    ↓
+document_category = membership
+
+trainer_directory_30_pages.pdf
+    ↓
+document_category = trainer_directory
 ```
 
-For PDF content, page information is also retained.
+Metadata helps with:
 
-Metadata enables better source tracking and QA validation.
+* Source identification
+* Debugging
+* Retrieval analysis
+* Excel reporting
+* Future metadata filtering
 
 ---
 
-# ✂️ Document Chunking
+# ✂️ Step 3 — Document Chunking
 
-`src/chunk_documents.py`
-
-The documents are divided into smaller chunks using:
+`chunk_documents.py` uses:
 
 ```python
-RecursiveCharacterTextSplitter
+RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50
+)
 ```
 
 Current configuration:
 
-```text
-Chunk Size    : 500
-Chunk Overlap : 50
-```
+| Parameter     |                          Value |
+| ------------- | -----------------------------: |
+| Chunk Size    |                            500 |
+| Chunk Overlap |                             50 |
+| Splitter      | RecursiveCharacterTextSplitter |
 
-Chunking improves semantic retrieval by allowing the vector database to search smaller sections of the documents.
+The metadata is preserved when documents are converted into chunks.
 
 ---
 
-# 🔢 Embeddings
+# 🧠 Step 4 — Embeddings
 
-`src/embeddings.py`
-
-The application uses:
+The project uses OpenAI embeddings:
 
 ```text
-OpenAI text-embedding-3-small
+text-embedding-3-small
 ```
 
 Each document chunk is converted into a vector representation.
 
-The vectors are stored in ChromaDB.
-
 ---
 
-# 🗄️ ChromaDB
+# 🗄️ Step 5 — ChromaDB
 
-The vector database is stored locally:
+The embeddings are stored locally in:
 
 ```text
 chroma_db/
@@ -281,159 +322,119 @@ Collection:
 gym_rag
 ```
 
-The retriever currently retrieves:
-
-```text
-Top K = 4
-```
-
-relevant document chunks for each query.
+ChromaDB provides vector similarity search for retrieving relevant chunks.
 
 ---
 
-# 🔎 Retrieval
+# 🔍 Step 6 — Retrieval
 
-`src/retriever.py`
+The retriever uses ChromaDB and retrieves the top 4 relevant chunks.
 
-The retrieval flow is:
-
-```text
-User Question
-      ↓
-Query Embedding
-      ↓
-ChromaDB Search
-      ↓
-Top 4 Relevant Chunks
-      ↓
-Context
+```python
+vectorstore.as_retriever(
+    search_kwargs={"k": 4}
+)
 ```
 
-The retrieved chunks are then passed to the RAG generation layer.
+The user's question is converted into an embedding and compared against stored document vectors.
 
 ---
 
-# 🧠 RAG Generation
-
-`src/rag.py`
+# 🤖 Step 7 — LLM Response Generation
 
 The application uses:
 
 ```text
-OpenAI
-Model: gpt-4.1-mini
-Temperature: 0
+gpt-4.1-mini
 ```
 
-The LLM receives:
+with:
 
 ```text
-User Question
-+
-Retrieved Context
+temperature = 0
 ```
 
-The prompt instructs the model to answer using only the provided context.
+The RAG prompt instructs the model to:
 
-If the required information is unavailable, the application responds:
+* Use only the retrieved context.
+* Avoid inventing information.
+* Return a predefined message when the information is unavailable.
+
+Fallback response:
 
 ```text
 I could not find this information in the provided documents.
 ```
 
-This provides a basic hallucination-control mechanism.
-
 ---
 
-# 🛡️ Grounded Response Strategy
+# 🛡️ Grounded AI Response
 
-The application follows a grounded-answer approach.
-
-The LLM is instructed:
+The application follows a grounded-generation approach.
 
 ```text
-Answer the user's question using ONLY the provided context.
-
-Do not invent information.
+User Question
+      ↓
+Retriever
+      ↓
+Relevant Documents
+      ↓
+Context
+      ↓
+LLM
+      ↓
+Grounded Answer
 ```
 
-The system identifies unavailable information and marks the response:
-
-```text
-NOT_FOUND
-```
-
-This behavior is useful for RAG QA validation.
+The model is instructed not to generate unsupported information.
 
 ---
 
 # 📊 Response Status
 
-Every query receives a status.
+Every RAG execution receives a status.
 
-## SUCCESS
+### SUCCESS
 
-The application generated an answer from the available context.
+Information was successfully retrieved and an answer was generated.
 
-```text
-SUCCESS
-```
+### NOT_FOUND
 
-## NOT_FOUND
+The requested information was not available in the retrieved context.
 
-The requested information was not available in the provided documents.
+### FAILED
 
-```text
-NOT_FOUND
-```
-
-## FAILED
-
-An application/runtime error occurred.
-
-```text
-FAILED
-```
+An unexpected application or processing error occurred.
 
 ---
 
-# ⚡ Response Latency
+# ⚡ Latency Tracking
 
-The application measures RAG execution time using:
-
-```python
-time.perf_counter()
-```
+The RAG execution measures response time using Python's performance timer.
 
 Example:
 
 ```text
-Response Latency: 2.35 seconds
-```
-
-The latency is stored in Excel under:
-
-```text
 Latency Seconds
+---------------
+1.82
+2.14
+1.67
 ```
 
-The dashboard uses these values to calculate:
-
-```text
-Average Response Time
-```
+Latency is stored in Excel and displayed on the dashboard.
 
 ---
 
-# 📗 Excel Execution Logging
+# 📗 Excel Logging
 
-Every query is recorded in:
+Every RAG execution is logged to:
 
 ```text
 output/rag_results.xlsx
 ```
 
-The Excel log contains:
+Columns:
 
 | Column          | Description                  |
 | --------------- | ---------------------------- |
@@ -441,100 +442,72 @@ The Excel log contains:
 | User Input      | User question                |
 | AI Output       | Generated answer             |
 | Status          | SUCCESS / NOT_FOUND / FAILED |
-| Source Files    | Retrieved source documents   |
+| Source Files    | Retrieved source files       |
 | Categories      | Document categories          |
-| Pages           | PDF page references          |
-| Latency Seconds | Response latency             |
+| Pages           | Retrieved PDF pages          |
+| Latency Seconds | RAG response time            |
 
 Example:
 
 ```text
-User Input:
-What exercises target the chest?
-
-Status:
-SUCCESS
-
-Source Files:
-exercise.txt
-
-Categories:
-exercise
-
-Latency Seconds:
-2.35
+Timestamp
+User Input
+AI Output
+Status
+Source Files
+Categories
+Pages
+Latency Seconds
 ```
 
 ---
 
-# 📈 Metrics Dashboard
+# 📊 RAG QA Dashboard
 
-`src/dashboard.py`
+The Streamlit dashboard provides visibility into RAG execution quality.
 
-The application includes a QA-focused metrics dashboard.
-
-The dashboard reads:
+Metrics include:
 
 ```text
-output/rag_results.xlsx
+Total Queries
+Successful Queries
+Not Found
+Failed Queries
+Success Rate
+Average Response Time
 ```
 
-and provides:
+Additional visualizations:
 
-* Total Queries
-* Successful Queries
-* NOT_FOUND Queries
-* Failed Queries
-* Success Rate
-* Average Response Time
-* Response Status Distribution
-* Source/Category Distribution
-* Recent Queries
-* Complete RAG Execution Log
+* Response status distribution
+* Source/category distribution
+* Recent queries
+* Complete RAG execution log
 
 ---
 
-# 🧪 RAG Debug Panel
+# 🧪 QA / Debug Panel
 
-The AI Assistant includes:
-
-```text
-🔍 RAG Debug Details
-```
-
-The panel displays:
+The application includes a debug section displaying:
 
 ```text
 User Query
-Response Status
+Status
 Retrieved Chunks
-Response Latency
+Latency
 LangSmith Project
+Retrieved Documents
 ```
 
-It also exposes retrieved document information:
-
-```text
-Source
-Category
-Content Type
-Page
-Retrieved Content
-```
-
-This makes the application useful as a **RAG QA demonstration**, not just a chatbot.
+This is useful for validating the RAG pipeline during development and QA.
 
 ---
 
-# 🔬 LangSmith Observability
+# 🔬 LangSmith Integration
 
-LangSmith tracing is enabled using:
+LangSmith tracing is enabled for RAG execution monitoring.
 
-```python
-@traceable(name="Gym-RAG-Application")
-```
-
-Configuration:
+Environment configuration:
 
 ```text
 LANGSMITH_TRACING=true
@@ -542,33 +515,26 @@ LANGSMITH_API_KEY=your_langsmith_api_key
 LANGSMITH_PROJECT=Gym-RAG-Demo
 ```
 
-LangSmith can be used to investigate:
+LangSmith can be used to analyze:
 
-* RAG executions
-* Retrieval behavior
+* RAG execution
+* Retriever behavior
 * LLM calls
 * Latency
-* Failures
-* Prompt execution
-* Application debugging
+* Errors
+* Debugging information
 
 ---
 
 # 🖥️ Streamlit Application
 
-The main application is:
-
-```text
-mainapplication.py
-```
-
-Run:
+The application is launched using:
 
 ```powershell
 streamlit run mainapplication.py
 ```
 
-The application contains two navigation options:
+The UI provides two primary sections:
 
 ```text
 🤖 AI Assistant
@@ -577,340 +543,183 @@ The application contains two navigation options:
 
 ---
 
-# 🤖 AI Assistant
+# ⌨️ User Interaction
 
-The AI Assistant provides:
+The AI Assistant supports:
 
 * Question input
-* Enter-key submission
 * Ask AI button
-* AI-generated answer
-* Source information
-* RAG debug details
-* Response status
-* Response latency
-* Retrieved document chunks
+* Enter-key submission
+* Latest-answer persistence
+* Retrieved-source visibility
+* Status display
+* Latency display
 
----
-
-# ⌨️ Enter-Key Support
-
-The question input uses a Streamlit form:
-
-```python
-with st.form("rag_question_form"):
-```
-
-and:
-
-```python
-st.form_submit_button(
-    "🔍 Ask AI",
-    type="primary"
-)
-```
-
-This allows users to:
+Example:
 
 ```text
-Type Question
-      ↓
-Press ENTER
-      ↓
-Submit Query
-      ↓
-Execute RAG
-```
+User:
+What is the membership fee for 1 month?
 
-The user can also click:
-
-```text
-🔍 Ask AI
+AI:
+The 1-month membership fee is ₹2,500.
+The registration fee is ₹500.
 ```
 
 ---
 
-# 💾 Session State
+# 🔄 Rebuilding the Vector Database
 
-The application uses Streamlit `st.session_state` to preserve the latest RAG result.
+Whenever a knowledge source is:
 
-The result is stored after execution:
+* Added
+* Deleted
+* Modified
+* Corrected
 
-```python
-st.session_state.result = result
+the ChromaDB should be rebuilt.
+
+### Delete existing database
+
+PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force .\chroma_db
 ```
 
-This prevents the AI response from disappearing when Streamlit reruns the application.
+### Rebuild
 
-The stored result contains:
+```powershell
+python -m src.embeddings
+```
+
+Expected output:
 
 ```text
-question
-answer
-documents
-status
-latency
-retrieved_chunks
+Loading TXT: exercise.txt
+Loading TXT: gym_membership.txt
+Loading PDF: trainer_directory_30_pages.pdf
+
+TXT documents loaded : 2
+PDF pages loaded     : 31
+Total documents      : 33
+
+Adding metadata...
+Creating chunks...
+Creating embeddings...
+Creating Chroma vector database...
+
+Vector database created successfully!
 ```
 
 ---
 
-# 🔄 Navigation Behavior
+# 🔎 RAG Retrieval Verification
 
-The application supports:
+Before testing through Streamlit, retrieval can be tested directly.
 
-```text
-🤖 AI Assistant
-        ↕
-📊 Metrics Dashboard
+```powershell
+python -c "from src.retriever import create_retriever; r=create_retriever(); docs=r.invoke('What is the membership fee for 1 month?'); [print(d.metadata, d.page_content) for d in docs]"
 ```
 
-When users switch between pages, Streamlit reruns the application.
+This helps determine whether the problem is in:
 
-The RAG result is stored in session state so that the latest AI response can remain available when returning to the AI Assistant.
+```text
+Document Loading
+       ↓
+Chunking
+       ↓
+Embedding
+       ↓
+ChromaDB
+       ↓
+Retriever
+       ↓
+LLM
+       ↓
+Streamlit
+```
 
 ---
 
 # 🧪 QA Test Scenarios
 
-## TC01 — Valid Exercise Query
+## Membership Tests
 
-Input:
+| Test                                 | Expected Result           |
+| ------------------------------------ | ------------------------- |
+| What is the registration fee?        | ₹500                      |
+| What is the 1 month fee?             | ₹2,500                    |
+| What is the 3 month fee?             | ₹5,000                    |
+| What is the 6 month fee?             | ₹7,000                    |
+| What is the 12 month fee?            | ₹12,000                   |
+| What membership plans are available? | All four plans            |
+| What is the price of a 2-year plan?  | Information not available |
+
+---
+
+## Trainer Tests
+
+Examples:
 
 ```text
-What exercises target the chest?
+Find bodybuilding trainers.
+
+Find trainers in Boston.
+
+Who specializes in yoga?
+
+Find a trainer with NASM certification.
+```
+
+---
+
+## Exercise Tests
+
+Examples:
+
+```text
+Give me exercises for chest.
+
+What exercises target the back?
+
+What exercises target the shoulders?
+```
+
+---
+
+## Negative / Hallucination Tests
+
+Ask questions that are not present in the knowledge base.
+
+Example:
+
+```text
+What is the gym's cancellation policy?
 ```
 
 Expected:
 
 ```text
-AI Answer
-Sources
-Retrieved Chunks
-Latency
-SUCCESS
+I could not find this information in the provided documents.
 ```
 
-Excel:
-
-```text
-Status = SUCCESS
-```
+This validates the application's grounding behavior.
 
 ---
 
-## TC02 — Trainer Query
+# ⚙️ Installation
 
-Input:
-
-```text
-Which trainers are available in the trainer directory?
-```
-
-Expected:
-
-```text
-Relevant trainer information
-PDF source
-Page information
-```
-
----
-
-## TC03 — Unsupported Query
-
-Input:
-
-```text
-What is the gym membership fee?
-```
-
-Expected:
-
-```text
-⚠️ No such data is available in the provided documents.
-```
-
-Excel:
-
-```text
-Status = NOT_FOUND
-```
-
----
-
-## TC04 — Empty Query
-
-Click:
-
-```text
-🔍 Ask AI
-```
-
-without entering a question.
-
-Expected:
-
-```text
-Please enter a question.
-```
-
----
-
-## TC05 — Source Validation
-
-Ask:
-
-```text
-What exercises target the chest?
-```
-
-Verify:
-
-```text
-Source File
-Category
-Page
-Retrieved Content
-```
-
-match the knowledge base.
-
----
-
-## TC06 — Latency Validation
-
-Execute multiple queries.
-
-Verify that:
-
-```text
-Latency Seconds
-```
-
-contains numeric values.
-
-The dashboard should calculate the average response time.
-
----
-
-## TC07 — Dashboard Validation
-
-Execute several queries.
-
-Navigate to:
-
-```text
-📊 Metrics Dashboard
-```
-
-Verify:
-
-```text
-Total Queries
-Successful
-NOT_FOUND
-FAILED
-Success Rate
-Average Response Time
-```
-
----
-
-## TC08 — Navigation Persistence
-
-1. Ask a question.
-2. View the AI answer.
-3. Open Metrics Dashboard.
-4. Return to AI Assistant.
-
-Expected:
-
-```text
-Previous AI response remains available.
-```
-
----
-
-# 🧪 QA Strategy
-
-This project can be validated across multiple testing dimensions.
-
-## Functional Testing
-
-Validate:
-
-* Document ingestion
-* Chunking
-* Metadata
-* Embeddings
-* Retrieval
-* LLM response
-* Source attribution
-* Excel logging
-* Dashboard calculations
-
-## RAG Testing
-
-Validate:
-
-* Retrieval relevance
-* Context accuracy
-* Answer grounding
-* Source correctness
-* Metadata correctness
-* NOT_FOUND behavior
-
-## Negative Testing
-
-Validate:
-
-* Empty questions
-* Irrelevant questions
-* Unsupported questions
-* Missing documents
-* ChromaDB unavailable
-* OpenAI API failures
-* Excel file locked
-
-## Performance Testing
-
-Measure:
-
-* Retrieval latency
-* LLM latency
-* End-to-end latency
-* Average response time
-
-## Observability Testing
-
-Validate:
-
-* LangSmith traces
-* Excel logs
-* Status tracking
-* Retrieved chunk count
-* Latency tracking
-
----
-
-# 🛠️ Installation
-
-## 1. Clone the Repository
+## 1. Clone the repository
 
 ```powershell
-git clone <your-repository-url>
-```
-
-Navigate to the project:
-
-```powershell
+git clone <your-github-repository>
 cd "Buildathon Gym App"
 ```
 
 ---
 
-## 2. Create Virtual Environment
+## 2. Create virtual environment
 
 ```powershell
 python -m venv venv
@@ -918,7 +727,7 @@ python -m venv venv
 
 ---
 
-## 3. Activate Environment
+## 3. Activate virtual environment
 
 PowerShell:
 
@@ -926,13 +735,13 @@ PowerShell:
 .\venv\Scripts\Activate.ps1
 ```
 
-If PowerShell blocks execution:
+If PowerShell blocks activation, use:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-Then:
+Then activate again:
 
 ```powershell
 .\venv\Scripts\Activate.ps1
@@ -944,6 +753,23 @@ Then:
 
 ```powershell
 pip install -r requirements.txt
+```
+
+Major dependencies:
+
+```text
+langchain
+langchain-community
+langchain-openai
+langchain-chroma
+langchain-text-splitters
+pypdf
+python-dotenv
+openpyxl
+pandas
+langsmith
+tiktoken
+streamlit
 ```
 
 ---
@@ -966,90 +792,21 @@ LANGSMITH_API_KEY=your_langsmith_api_key
 LANGSMITH_PROJECT=Gym-RAG-Demo
 ```
 
-Never commit real API keys to Git.
+**Never commit real API keys to GitHub.**
+
+Add `.env` to `.gitignore`.
 
 ---
 
-# 🗄️ Build the Vector Database
+# ▶️ Running the Application
 
-After adding or changing documents:
+## Build Vector Database
 
 ```powershell
-python src/embeddings.py
+python -m src.embeddings
 ```
 
-The process is:
-
-```text
-Load
- ↓
-Metadata
- ↓
-Chunk
- ↓
-Embed
- ↓
-Store
-```
-
-The generated ChromaDB data is stored in:
-
-```text
-chroma_db/
-```
-
----
-
-# ▶️ Run the Application
-
-From the project root:
-
-```powershell
-streamlit run mainapplication.py
-```
-
----
-
-# 📊 Reset Excel Metrics
-
-During development, if the Excel schema changes, delete:
-
-```text
-output/rag_results.xlsx
-```
-
-Then restart the application and execute a new query.
-
-The logger will recreate the workbook with the latest columns.
-
-If Excel is open while the application tries to write to it, Windows may return:
-
-```text
-PermissionError: [Errno 13] Permission denied
-```
-
-Close the Excel workbook before running another query.
-
----
-
-# 🔄 Rebuild ChromaDB
-
-If the source documents are changed significantly:
-
-1. Stop the Streamlit application.
-2. Remove the existing:
-
-```text
-chroma_db/
-```
-
-3. Rebuild:
-
-```powershell
-python src/embeddings.py
-```
-
-4. Restart:
+## Start Streamlit
 
 ```powershell
 streamlit run mainapplication.py
@@ -1059,277 +816,291 @@ streamlit run mainapplication.py
 
 # 🐛 Troubleshooting
 
-## Excel Permission Error
+## Membership information returns "No data found"
 
-```text
-PermissionError: [Errno 13] Permission denied
+Check the following:
+
+### 1. Verify file exists
+
+```powershell
+Get-ChildItem .\data
 ```
 
-Solution:
+You should see:
 
-* Close `rag_results.xlsx`.
-* Restart the query.
+```text
+exercise.txt
+gym_membership.txt
+trainer_directory_30_pages.pdf
+```
+
+### 2. Verify membership content
+
+```powershell
+Get-Content .\data\gym_membership.txt
+```
+
+### 3. Verify metadata
+
+```powershell
+python -m src.metadata
+```
+
+Expected:
+
+```text
+Source File       : gym_membership.txt
+Category          : membership
+Content Type      : membership_information
+```
+
+### 4. Rebuild ChromaDB
+
+```powershell
+Remove-Item -Recurse -Force .\chroma_db
+python -m src.embeddings
+```
+
+### 5. Test retrieval
+
+```powershell
+python -c "from src.retriever import create_retriever; r=create_retriever(); docs=r.invoke('What is the membership fee for 1 month?'); [print(d.metadata, d.page_content) for d in docs]"
+```
 
 ---
 
-## Cannot Convert List to Excel
+# ⚠️ Encoding Issue
+
+If PowerShell displays:
 
 ```text
-Cannot convert [] to Excel
-```
-
-Cause:
-
-A Python list was passed directly to an Excel cell.
-
-Solution:
-
-Convert metadata collections into strings before writing to Excel.
-
----
-
-## Latency List Error
-
-```text
-float() argument must be a string or a real number, not 'list'
-```
-
-Latency must be numeric:
-
-```python
-latency = 2.35
-```
-
-and not:
-
-```python
-latency = [2.35]
-```
-
----
-
-## Streamlit Width Warning
-
-If Streamlit reports:
-
-```text
-For use_container_width=True, use width='stretch'.
-```
-
-Use:
-
-```python
-width="stretch"
+â‚¹
 ```
 
 instead of:
 
-```python
-use_container_width=True
+```text
+₹
 ```
 
-For content-sized components:
+the file has an encoding/display mismatch.
 
-```python
-width="content"
+The membership amounts themselves can still be represented correctly, but the file should ideally be saved as **UTF-8**.
+
+In VS Code:
+
+```text
+File
+ → Save with Encoding
+ → UTF-8
 ```
 
----
-
-## ModuleNotFoundError
-
-Run Streamlit from the project root:
-
-```powershell
-cd "C:\Users\Balaji KT\Buildathon Gym App"
-```
-
-Then:
-
-```powershell
-streamlit run mainapplication.py
-```
-
-Use package imports:
-
-```python
-from src.rag import ask_question
-```
+Then rebuild ChromaDB.
 
 ---
 
 # 🔒 Git Security
 
-Recommended `.gitignore`:
-
-```gitignore
-__pycache__/
-*.py[cod]
-
-venv/
-.venv/
-env/
-
-.env
-.env.*
-!.env.example
-
-chroma_db/
-
-output/
-*.xlsx
-*.xls
-
-.streamlit/secrets.toml
-
-.vscode/
-.idea/
-
-.DS_Store
-Thumbs.db
-
-*.log
-.ipynb_checkpoints/
-*.tmp
-*.temp
-```
-
-Do not commit:
+Never commit:
 
 ```text
 .env
-API keys
-chroma_db/
-output/rag_results.xlsx
+```
+
+or API keys.
+
+Recommended `.gitignore`:
+
+```text
 venv/
+.env
+__pycache__/
+*.pyc
+chroma_db/
+output/
+.streamlit/
 ```
 
 ---
 
-# 📦 Technology Stack
+# 🧰 Technology Stack
 
-| Layer                | Technology                    |
-| -------------------- | ----------------------------- |
-| Programming Language | Python                        |
-| UI                   | Streamlit                     |
-| RAG Framework        | LangChain                     |
-| LLM                  | OpenAI GPT-4.1-mini           |
-| Embeddings           | OpenAI text-embedding-3-small |
-| Vector Database      | ChromaDB                      |
-| PDF Processing       | PyPDF                         |
-| Excel Logging        | OpenPyXL                      |
-| Data Analysis        | Pandas                        |
-| Observability        | LangSmith                     |
-| Configuration        | python-dotenv                 |
+| Technology | Purpose                       |
+| ---------- | ----------------------------- |
+| Python     | Application development       |
+| LangChain  | RAG orchestration             |
+| OpenAI     | Embeddings + LLM              |
+| ChromaDB   | Vector database               |
+| PyPDF      | PDF document processing       |
+| LangSmith  | AI tracing and observability  |
+| OpenPyXL   | Excel logging                 |
+| Pandas     | Metrics processing            |
+| Streamlit  | Web application and dashboard |
+| Git/GitHub | Version control               |
 
 ---
 
-# 🏆 GenAI + QA Capabilities Demonstrated
+# 🤖 GenAI Capabilities
 
-This project demonstrates a practical combination of:
+This project demonstrates:
 
-## GenAI
+* Retrieval-Augmented Generation
+* Vector embeddings
+* Semantic search
+* LLM-based answer generation
+* Grounded responses
+* Hallucination prevention
+* Metadata enrichment
+* Multi-source knowledge retrieval
+* AI observability
+* RAG performance monitoring
 
-* LLM integration
-* Prompt engineering
-* Embeddings
-* Grounded generation
+---
 
-## RAG
+# 🧪 QA Capabilities
 
-* Document ingestion
-* Chunking
-* Metadata
-* Vector search
-* Context retrieval
-* Source attribution
-
-## QA
+This project also demonstrates practical GenAI QA concepts:
 
 * Functional testing
 * Negative testing
-* RAG validation
-* Source validation
-* Performance measurement
-* Observability
-* Execution logging
-* Metrics monitoring
-
-## Engineering
-
-* Python
-* LangChain
-* ChromaDB
-* Streamlit
-* Excel
-* LangSmith
-* Environment configuration
-* Modular project structure
+* Retrieval validation
+* Hallucination testing
+* Source verification
+* Metadata validation
+* Response-status validation
+* Latency measurement
+* Error handling
+* Regression validation
+* RAG pipeline debugging
+* Excel-based execution logging
+* Dashboard-based quality monitoring
 
 ---
 
 # 🚀 Future Enhancements
 
-Potential next versions can include:
+Potential improvements:
 
-* 💬 Conversation history
-* 🧠 Long-term memory
-* 🏷️ Metadata filtering
-* 🔎 Advanced trainer search
-* 💪 Personalized exercise recommendations
-* 🔐 Authentication
-* 👥 Role-based access
-* 🧪 Automated RAG evaluation
-* 📏 Faithfulness scoring
-* 🎯 Answer relevance scoring
-* 📊 Retrieval precision/recall
-* ⚡ Performance testing
-* 🧪 Automated regression suite
-* 🔌 FastAPI backend
-* 🔄 CI/CD integration
-* 🤖 Agentic AI workflows
-* 👥 Multi-agent fitness assistant
-* 🚦 Automated AI quality gates
-* 📈 Advanced LangSmith evaluation
+### 1. Metadata Filtering
+
+Allow queries such as:
+
+```text
+Search only membership information.
+```
+
+or:
+
+```text
+Search only trainer information.
+```
+
+### 2. Hybrid Search
+
+Combine:
+
+```text
+Vector Search
++
+Keyword Search
+```
+
+for improved retrieval accuracy.
+
+### 3. Reranking
+
+Add a reranking layer after vector retrieval to improve relevance.
+
+### 4. Conversation Memory
+
+Allow users to ask follow-up questions while maintaining conversation context.
+
+### 5. Authentication
+
+Add role-based access for:
+
+```text
+Admin
+Trainer
+Member
+Support
+```
+
+### 6. Advanced QA Metrics
+
+Add:
+
+```text
+Retrieval Accuracy
+Answer Relevance
+Faithfulness
+Context Precision
+Context Recall
+```
+
+### 7. Automated RAG Evaluation
+
+Create an evaluation dataset containing:
+
+```text
+Question
+Expected Answer
+Retrieved Context
+Actual Answer
+Evaluation Score
+```
+
+### 8. Agentic AI
+
+Extend the application into an agent that can:
+
+```text
+Understand Goal
+      ↓
+Plan
+      ↓
+Retrieve Information
+      ↓
+Use Tools
+      ↓
+Validate Result
+      ↓
+Respond
+```
 
 ---
 
-# 🎓 Portfolio / Buildathon Value
+# 🎯 Project Outcome
 
-This project can be presented as an:
-
-> **End-to-End GenAI RAG QA Application**
-
-It demonstrates not only chatbot functionality but also:
+The Infinity Fitness Gym AI Assistant demonstrates a complete practical GenAI pipeline:
 
 ```text
-Data
- ↓
-RAG
- ↓
+Heterogeneous Documents
+        ↓
+Document Loading
+        ↓
+Metadata Enrichment
+        ↓
+Chunking
+        ↓
+Embeddings
+        ↓
+ChromaDB
+        ↓
+Semantic Retrieval
+        ↓
 LLM
- ↓
-Observability
- ↓
-QA Validation
- ↓
-Performance Metrics
- ↓
-Execution Logging
- ↓
-Dashboard
+        ↓
+Grounded Response
+        ↓
+Excel Logging
+        ↓
+QA Dashboard
+        ↓
+LangSmith Observability
 ```
 
-This makes the project suitable for demonstrating practical skills in:
-
-* GenAI
-* RAG
-* AI Quality Engineering
-* Automation Testing
-* LLM Testing
-* AI Observability
-* Performance Engineering
-* QA Leadership
+This makes the project suitable as a **GenAI / RAG / Agentic AI QA portfolio and buildathon project**.
 
 ---
 
@@ -1338,23 +1109,11 @@ This makes the project suitable for demonstrating practical skills in:
 **Balaji Thiyagarajan**
 
 QA Lead / QA Manager
-
-Focus Areas:
-
-```text
-GenAI
-Agentic AI
-RAG
-AI Quality Engineering
-Automation Testing
-Performance Testing
-API Testing
-Selenium
-Python
-```
+GenAI & Agentic AI QA
+RAG | LLM | Selenium | Python | API | Performance Testing
 
 ---
 
 # 📄 License
 
-This project is intended for educational, demonstration, buildathon, and portfolio purposes.
+This project is intended for educational, demonstration, portfolio, and buildathon purposes.
