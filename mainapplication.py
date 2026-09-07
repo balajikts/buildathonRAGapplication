@@ -58,6 +58,7 @@ with st.sidebar:
         📄 Exercises Manual  
         📑 Trainer's Information
         💵 Gym Membership Tariff
+        
 
         **AI Components**
 
