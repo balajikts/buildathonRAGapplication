@@ -37,6 +37,7 @@ Ask questions about:
 - 💪 Exercises - Targeted for each Muscle
 - 🏃 Training information
 - 👤 Trainers and Certification Information
+- 💵 Membership Tariff
 - 📄 Information available in the provided documents
 """
 )
@@ -56,6 +57,7 @@ with st.sidebar:
 
         📄 Exercises Manual  
         📑 Trainer's Information
+        💵 Gym Membership Tariff
 
         **AI Components**
 
@@ -111,7 +113,7 @@ else:
         )
 
         submitted = st.form_submit_button(
-            "🔍 Ask AI",
+            "🔍 Search",
             type="primary"
         )
 
@@ -129,7 +131,7 @@ else:
         else:
 
             with st.spinner(
-                "Searching documents and generating answer..."
+                "Thinking... Please wait..."
             ):
 
                 try:
