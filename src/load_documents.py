@@ -1,59 +1,122 @@
 from pathlib import Path
 
-import langchain_community.document_loaders
+from langchain_community.document_loaders import (
+    TextLoader,
+    PyPDFLoader
+)
+
 
 DATA_DIR = Path("data")
 
 
-def load_txt_file():
-    file_path = DATA_DIR / "exercise.txt"
+# --------------------------------------------------
+# LOAD ALL TXT FILES
+# --------------------------------------------------
 
-    loader = langchain_community.document_loaders.TextLoader(
-        str(file_path),
-        encoding="utf-8"
-    )
+def load_txt_files():
 
-    documents = loader.load()
+    documents = []
 
-    for doc in documents:
-        doc.metadata["source_type"] = "TXT"
-        doc.metadata["file_name"] = file_path.name
+    txt_files = list(DATA_DIR.glob("*.txt"))
+
+    for file_path in txt_files:
+
+        print(f"Loading TXT: {file_path.name}")
+
+        loader = TextLoader(
+            str(file_path),
+            encoding="utf-8"
+        )
+
+        txt_documents = loader.load()
+
+        for doc in txt_documents:
+
+            doc.metadata["source_type"] = "TXT"
+            doc.metadata["file_name"] = file_path.name
+
+        documents.extend(txt_documents)
 
     return documents
 
 
-def load_pdf_file():
-    file_path = DATA_DIR / "trainer_directory_30_pages.pdf"
+# --------------------------------------------------
+# LOAD ALL PDF FILES
+# --------------------------------------------------
 
-    loader = langchain_community.document_loaders.PyPDFLoader(str(file_path))
+def load_pdf_files():
 
-    documents = loader.load()
+    documents = []
 
-    for doc in documents:
-        doc.metadata["source_type"] = "PDF"
-        doc.metadata["file_name"] = file_path.name
+    pdf_files = list(DATA_DIR.glob("*.pdf"))
+
+    for file_path in pdf_files:
+
+        print(f"Loading PDF: {file_path.name}")
+
+        loader = PyPDFLoader(
+            str(file_path)
+        )
+
+        pdf_documents = loader.load()
+
+        for doc in pdf_documents:
+
+            doc.metadata["source_type"] = "PDF"
+            doc.metadata["file_name"] = file_path.name
+
+        documents.extend(pdf_documents)
 
     return documents
 
+
+# --------------------------------------------------
+# LOAD ALL DOCUMENTS
+# --------------------------------------------------
 
 def load_all_documents():
 
-    txt_documents = load_txt_file()
-    pdf_documents = load_pdf_file()
+    txt_documents = load_txt_files()
+    pdf_documents = load_pdf_files()
 
-    all_documents = txt_documents + pdf_documents
+    all_documents = (
+        txt_documents +
+        pdf_documents
+    )
 
-    print(f"TXT documents loaded : {len(txt_documents)}")
-    print(f"PDF pages loaded     : {len(pdf_documents)}")
-    print(f"Total documents      : {len(all_documents)}")
+    print(
+        f"\nTXT documents loaded : "
+        f"{len(txt_documents)}"
+    )
+
+    print(
+        f"PDF pages loaded     : "
+        f"{len(pdf_documents)}"
+    )
+
+    print(
+        f"Total documents      : "
+        f"{len(all_documents)}"
+    )
 
     return all_documents
 
 
+# --------------------------------------------------
+# TEST
+# --------------------------------------------------
+
 if __name__ == "__main__":
+
     documents = load_all_documents()
 
-    print("\nFirst document:")
-    print(documents[0])
-    print("\nMetadata:")
-    print(documents[0].metadata)
+    print("\nLoaded Sources:")
+
+    for document in documents:
+
+        print(
+            document.metadata.get(
+                "file_name",
+                "Unknown"
+            )
+        )
